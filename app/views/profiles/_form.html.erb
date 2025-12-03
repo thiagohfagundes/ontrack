@@ -1,0 +1,48 @@
+<!-- app/views/profiles/_form.html.erb -->
+<%= form_with model: user, url: profile_path, local: true, method: :patch, class: "space-y-6" do |f| %>
+  <% if user.errors.any? %>
+    <div class="p-3 bg-red-50 border border-red-200 rounded text-red-700">
+      <p class="font-semibold"><%= pluralize(user.errors.count, "erro") %> ao salvar:</p>
+      <ul class="mt-2 list-disc list-inside">
+        <% user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <%= f.label :first_name, "Primeiro nome", class: "block text-sm text-gray-700 dark:text-neutral-300" %>
+      <%= f.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-2" %>
+    </div>
+
+    <div>
+      <%= f.label :last_name, "Último nome", class: "block text-sm text-gray-700 dark:text-neutral-300" %>
+      <%= f.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-2" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :email, "Email", class: "block text-sm text-gray-700 dark:text-neutral-300" %>
+    <%= f.email_field :email, class: "mt-1 block w-full rounded-md border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-2" %>
+  </div>
+
+  <%# Avatar (opcional) %>
+  <% if defined?(ActiveStorage) %>
+    <div>
+      <%= f.label :avatar, "Avatar (opcional)", class: "block text-sm text-gray-700 dark:text-neutral-300" %>
+      <%= f.file_field :avatar, class: "mt-1 block w-full" %>
+      <% if user.avatar.attached? %>
+        <div class="mt-2">
+          <%= image_tag user.avatar.variant(resize_to_limit: [120,120]), class: "w-24 h-24 rounded-full object-cover" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="flex items-center gap-2">
+    <%= f.submit "Salvar alterações", class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700" %>
+    <%= link_to "Cancelar", profile_path, class: "inline-flex items-center px-4 py-2 border rounded-md text-sm" %>
+  </div>
+<% end %>

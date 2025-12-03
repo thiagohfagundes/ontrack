@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  from_email: MyString
+  to_email: MyString
+  email_status: MyString
+  subject: MyString
+  body_text: MyText
+  body_html: MyText
+  email_direction: MyString
+  timestamp: 2025-12-03 15:07:31
+  onboarding: one
+
+two:
+  from_email: MyString
+  to_email: MyString
+  email_status: MyString
+  subject: MyString
+  body_text: MyText
+  body_html: MyText
+  email_direction: MyString
+  timestamp: 2025-12-03 15:07:31
+  onboarding: two

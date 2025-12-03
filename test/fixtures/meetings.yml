@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  body: MyText
+  start_time: 2025-12-03 14:23:11
+  end_time: 2025-12-03 14:23:11
+  outcome: MyString
+  internal_notes: MyText
+  hubspot_id: MyString
+  onboarding: one
+
+two:
+  title: MyString
+  body: MyText
+  start_time: 2025-12-03 14:23:11
+  end_time: 2025-12-03 14:23:11
+  outcome: MyString
+  internal_notes: MyText
+  hubspot_id: MyString
+  onboarding: two

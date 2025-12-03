@@ -1,0 +1,95 @@
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800">Onboardings</h1>
+    <p class="text-gray-500 mt-1">
+        Lista de onboardings aos quais você é proprietário. Você pode adicionar, visualizar e editar onboardings.
+      </p>
+  </div>
+
+  <%= link_to "Novo onboarding", new_onboarding_path,
+    class: "inline-block px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition" %>
+</div>
+
+
+<!-- Tabela corrigida: largura fixa, colunas proporcionais e tratamento de dados faltantes -->
+<div class="rounded-lg border border-gray-200 overflow-hidden dark:border-neutral-700">
+  <table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-neutral-700">
+    <thead class="bg-gray-50 dark:bg-neutral-900">
+      <tr>
+        <!-- largura controlada com classes w- -->
+        <th scope="col" class="w-1/4 px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Título</th>
+        <th scope="col" class="w-1/2 px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Descrição</th>
+        <th scope="col" class="w-1/6 px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Progresso</th>
+        <th scope="col" class="w-1/6 px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Data de criação</th>
+        <th scope="col" class="w-1/6 px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Prazo</th>
+        <th scope="col" class="w-1/12 px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Ações</th>
+      </tr>
+    </thead>
+
+    <tbody class="bg-white divide-y divide-gray-100 dark:bg-neutral-800 dark:divide-neutral-700">
+      <% @onboardings.each do |onboarding| %>
+        <tr class="hover:bg-gray-50 dark:hover:bg-neutral-700">
+          <!-- TÍTULO: link, truncado, fallback 'Sem título' -->
+          <td class="px-6 py-4 align-middle whitespace-nowrap text-sm font-medium text-gray-900 dark:text-neutral-100">
+            <% title = onboarding.title.presence || "Sem título" %>
+            <%= link_to title, onboarding, class: "block truncate max-w-full hover:underline", title: title %>
+          </td>
+
+          <!-- DESCRIÇÃO: truncar, tooltip com texto completo, fallback '—' -->
+          <td class="px-6 py-4 align-middle text-sm text-gray-700 dark:text-neutral-200">
+            <% desc = onboarding.description.presence || "—" %>
+            <span class="block truncate max-w-full" title="<%= desc %>"><%= truncate(desc, length: 120) %></span>
+          </td>
+
+          <!-- PROGRESSO -->
+          <td class="px-6 py-4 align-middle whitespace-nowrap text-sm text-gray-700 dark:text-neutral-200">
+            <% progress = onboarding.progress_percentage.to_i %>
+
+            <div class="w-full bg-gray-200 dark:bg-neutral-700 rounded-full h-3 overflow-hidden">
+              <div 
+                class="
+                  h-3 
+                  rounded-full 
+                  transition-all 
+                  duration-300
+                  <%= progress == 100 ? 'bg-green-500' : 'bg-blue-500' %>
+                "
+                style="width: <%= progress %>%;">
+              </div>
+            </div>
+
+            <span class="text-xs mt-1 block">
+              <%= progress %>% concluído
+            </span>
+          </td>
+
+          <!-- DATA: formatada ou placeholder -->
+          <td class="px-6 py-4 align-middle whitespace-nowrap text-sm text-gray-700 dark:text-neutral-200">
+            <% if onboarding.created_at.present? %>
+              <%= onboarding.created_at.strftime("%d/%m/%Y") %>
+            <% else %>
+              — 
+            <% end %>
+          </td>
+
+          <!-- DATA: formatada ou placeholder -->
+          <td class="px-6 py-4 align-middle whitespace-nowrap text-sm text-gray-700 dark:text-neutral-200">
+            <% if onboarding.due_date.present? %>
+              <%= onboarding.due_date.strftime("%d/%m/%Y") %>
+            <% else %>
+              — 
+            <% end %>
+          </td>
+
+          <!-- AÇÕES: compactas, alinhadas à direita -->
+          <td class="px-6 py-4 align-middle whitespace-nowrap text-sm text-right">
+            <div class="inline-flex items-center gap-2">
+              <%= link_to "Editar", edit_onboarding_path(onboarding), class: "px-2 py-1 text-xs font-medium rounded border border-transparent hover:bg-gray-100 dark:hover:bg-neutral-700" %>
+              <%= button_to "Excluir", onboarding, method: :delete, data: { confirm: "Tem certeza?" }, class: "px-2 py-1 text-xs font-medium rounded border border-transparent text-red-600 hover:bg-red-50 dark:hover:bg-neutral-700" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

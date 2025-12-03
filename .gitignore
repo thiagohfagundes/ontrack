@@ -1,0 +1,60 @@
+# Ignore bundler config
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+!/log/.keep
+/tmp
+!/tmp/.keep
+
+# Ignore uploaded files in development
+/storage/*
+!/storage/.keep
+
+# Ignore master key for decrypting credentials and more.
+/config/credentials.yml.enc
+/config/master.key
+
+# Ignore environment-specific files
+/.env
+/.env.*
+
+# Ignore sqlite files (if you use sqlite)
+*.sqlite3
+*.sqlite3-journal
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore node modules (if using js bundlers)
+node_modules/
+
+# Ignore Yarn files
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# Ignore other files related to JS tools
+/.pnp
+.pnp.js
+
+# Ignore byebug history
+.byebug_history
+
+# Ignore coverage reports
+/coverage
+
+# Ignore bundler config
+/.bundle/
+
+# Ignore installed gems
+/vendor/bundle
+
+# Ignore OS specific
+*.swp
+*.swo
+

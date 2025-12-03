@@ -1,0 +1,61 @@
+<% content_for :title, "Showing onboarding" %>
+
+<div class="md:w-2/3 w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl">Detalhes do onboarding</h1>
+
+  <%= render @onboarding %>
+
+  <p><strong>Última sincronização com Hubspot:</strong></p><%= @onboarding.hubspot_synced_at.strftime("%d/%m/%Y às %H:%M") if @onboarding.hubspot_synced_at.present? %>
+
+  <% if @onboarding.tasks.any? %>
+    <h2 class="font-semibold text-2xl mt-6 mb-4">Tarefas associadas</h2>
+    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
+      <ul>
+        <% @onboarding.tasks.each do |task| %>
+          <li><%= task.subject %> - <span><%= task.status %></span></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @onboarding.participants.any? %>
+    <h2 class="font-semibold text-2xl mt-6 mb-4">Participantes associados</h2>
+    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
+      <ul>
+        <% @onboarding.participants.each do |participant| %>
+          <li><%= "#{participant.firstname} #{participant.lastname}" %> - <span><%= participant.email %></span></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @onboarding.meetings.any? %>
+    <h2 class="font-semibold text-2xl mt-6 mb-4">Reuniões associadas</h2>
+    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
+      <ul>
+        <% @onboarding.meetings.each do |meeting| %>
+          <li><%= meeting.title %> - <span><%= meeting.start_time.strftime("%d/%m/%Y às %H:%M") %> - <%= meeting.outcome %></span></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @onboarding.emails.any? %>
+    <h2 class="font-semibold text-2xl mt-6 mb-4">E-mails associados</h2>
+    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
+      <ul>
+        <% @onboarding.emails.each do |email| %>
+          <li><%= email.subject %> - <span>De: <%= email.from_email %> Para: <%= email.to_email %> - Data: <%= email.timestamp.strftime("%d/%m/%Y às %H:%M") if email.timestamp.present? %></span></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+
+  <%= link_to "Edit this onboarding", edit_onboarding_path(@onboarding), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <%= link_to "Back to onboardings", onboardings_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <%= button_to "Destroy this onboarding", @onboarding, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
