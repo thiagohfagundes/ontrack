@@ -30,15 +30,6 @@ class Onboarding < ApplicationRecord
       participantes = hubspot.get_associated_contacts(hubspot_id)
       reunioes = hubspot.get_associated_meetings(hubspot_id)
       emails_trocados = hubspot.get_associated_emails(hubspot_id)
-      empresas = hubspot.get_associated_companies(hubspot_id)
-
-      empresas.each do |company|
-        companies.create(
-          name: company["name"],
-          domain: company["domain"],
-          hubspot_id: company["hs_object_id"]
-        )
-      end
 
       tarefas.each do |task|
         tasks.create(
