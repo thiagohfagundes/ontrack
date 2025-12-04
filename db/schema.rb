@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_03_190749) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_04_125517) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -115,6 +115,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_190749) do
     t.index ["onboarding_id"], name: "index_tasks_on_onboarding_id"
   end
 
+  create_table "templates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_templates_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "current_sign_in_at"
@@ -141,4 +150,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_190749) do
   add_foreign_key "onboardings", "users"
   add_foreign_key "participants", "onboardings"
   add_foreign_key "tasks", "onboardings"
+  add_foreign_key "templates", "users"
 end

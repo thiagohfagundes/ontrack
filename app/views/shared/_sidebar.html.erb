@@ -37,7 +37,7 @@
 
           <li>
             <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700" 
-              href="#users">
+              href="/templates">
               <!-- Icon -->
               Templates
             </a>
@@ -50,13 +50,13 @@
     <!-- USUÁRIO FIXADO EMBAIXO -->
     <% if user_signed_in? %>
       <div class="p-3 mt-auto">
-        <details class="group relative">
+        <details class="group relative" aria-haspopup="true">
+          <!-- área clicável (resume): avatar + nome/email -->
           <summary class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 cursor-pointer list-none">
-            
             <!-- Avatar -->
             <div class="flex-none w-10 h-10 rounded-full bg-gray-200 dark:bg-neutral-700 flex items-center justify-center text-sm font-semibold text-gray-800 dark:text-neutral-100">
               <% if current_user.respond_to?(:avatar) && current_user.avatar.attached? %>
-                <%= image_tag current_user.avatar.variant(resize_to_fill: [40,40]), class: "w-10 h-10 rounded-full" %>
+                <%= image_tag current_user.avatar.variant(resize_to_fill: [40,40]), class: "w-10 h-10 rounded-full object-cover" %>
               <% else %>
                 <% initials = (current_user.full_name.presence || current_user.email).split.map(&:first).first(2).join.upcase %>
                 <span><%= initials %></span>
@@ -73,20 +73,53 @@
               </div>
             </div>
 
+            <!-- caret pequeno (opcional) -->
+            <div class="ml-auto">
+              <svg class="w-4 h-4 text-gray-400 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
           </summary>
 
-          <!-- MENU DROPDOWN (abertura lateral) -->
-          <div class="absolute bottom-full left-0 mb-2 
-                      bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 
-                      rounded-lg shadow-lg p-2 z-50">
+          <!-- MENU (abre para cima; ajustar posicionamento onde o partial for usado) -->
+          <div class="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-lg p-2 z-50">
+            <!-- email no topo, estilo card pequeno -->
+            <div class="px-3 py-2 rounded-md bg-gray-50 dark:bg-neutral-900 text-xs text-gray-600 dark:text-neutral-300 mb-2">
+              <%= current_user.email %>
+            </div>
 
-            <%= link_to 'Perfil', profile_path, class: 'block px-3 py-2 text-sm rounded hover:bg-gray-50 dark:hover:bg-neutral-700' %>
-            <%= link_to 'Configurações', '#', class: 'block px-3 py-2 text-sm rounded hover:bg-gray-50 dark:hover:bg-neutral-700' %>
+            <!-- Opções -->
+            <nav class="flow-root">
+              <ul class="-my-1">
+                <li>
+                  <%= link_to edit_profile_path, class: "flex items-center gap-3 px-3 py-2 text-sm rounded hover:bg-gray-50 dark:hover:bg-neutral-700" do %>
+                    <!-- Ícone engrenagem -->
+                    <svg class="w-4 h-4 text-gray-600 dark:text-neutral-300 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1 1 0 0 0 .95.69h.14c.97 0 1.73.96 1.46 1.9a1 1 0 0 0 .3 1.06l.1.1a1 1 0 0 1 .24 1.09c-.36.86.2 1.86 1.12 2.07a1 1 0 0 1 .71 1.15 9.03 9.03 0 0 1-.58 2.53c-.2.55.15 1.17.73 1.21.74.06 1.3.75 1.05 1.47a1 1 0 0 1-1.09.67 9.014 9.014 0 0 1-2.53-.58 1 1 0 0 1-.73-.73c-.06-.57-.66-.93-1.21-.73a9.03 9.03 0 0 1-2.53.58 1 1 0 0 1-.67-1.09c.06-.74-.61-1.39-1.35-1.35-.74.06-1.39-.61-1.35-1.35.06-.74-.61-1.39-1.35-1.35-.74.06-1.39-.61-1.35-1.35.06-.74-.61-1.39-1.35-1.35-.74.06-1.39-.61-1.35-1.35C3.01 9.4 2.34 8.75 1.6 8.69c-.74-.06-1.35.61-1.35 1.35.06.74-.61 1.39-1.35 1.35-.74-.06-1.39.61-1.35 1.35C-1.6 13.76-.93 14.41-.19 14.47c.74.06 1.39-.61 1.35-1.35.06-.74.61-1.39 1.35-1.35.74.06 1.39-.61 1.35-1.35-.06-.74.61-1.39 1.35-1.35.74.06 1.39-.61 1.35-1.35z"/>
+                    </svg>
 
-            <div class="border-t my-1 dark:border-neutral-700"></div>
+                    <span class="text-gray-700 dark:text-neutral-100">Configurações</span>
+                  <% end %>
+                </li>
 
-            <%= button_to 'Sair', destroy_user_session_path, method: :delete,
-                class: 'w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-50 dark:hover:bg-neutral-700' %>
+                <li class="my-1">
+                  <div class="border-t dark:border-neutral-700"></div>
+                </li>
+
+                <li>
+                  <%= button_to destroy_user_session_path, method: :delete, form: { "data-turbo" => "false" }, class: "w-full text-left" do %>
+                    <div class="flex items-center gap-3 px-3 py-2 text-sm rounded hover:bg-gray-50 dark:hover:bg-neutral-700 text-red-600 dark:text-red-400">
+                      <!-- Ícone logout -->
+                      <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1"/>
+                      </svg>
+
+                      <span class="text-gray-700 dark:text-neutral-100">Sair</span>
+                    </div>
+                  <% end %>
+                </li>
+              </ul>
+            </nav>
           </div>
         </details>
       </div>

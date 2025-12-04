@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :templates
   resources :onboardings
   devise_for :users
   resource :profile, only: [:show, :edit, :update]
