@@ -69,6 +69,6 @@ gem "devise", "~> 4.9"
 gem "tailwindcss-rails", "~> 4.4"
 
 gem "faraday", "~> 2.14"
-gem "json", "~> 2.16"
+gem "json", "~> 2.17"
 
 gem "dotenv-rails", "~> 3.2", groups: [:development, :test]
