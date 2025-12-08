@@ -1,61 +1,344 @@
 <% content_for :title, "Showing onboarding" %>
 
-<div class="md:w-2/3 w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
+<div class="max-w-8xl mx-auto px-6 py-8">
+  <div class="flex gap-8">
+    <!-- Left column: main content -->
+    <div class="flex-1 min-w-0">
+      <% if notice.present? %>
+        <p id="notice" class="inline-block py-2 px-3 bg-green-50 text-green-700 rounded-md mb-4 font-medium"><%= notice %></p>
+      <% end %>
 
-  <h1 class="font-bold text-4xl">Detalhes do onboarding</h1>
+      <div class="flex items-start justify-between">
+        <div>
+          <h1 class="text-3xl font-extrabold text-slate-900">Detalhes do onboarding</h1>
+          <p class="mt-1 text-sm text-slate-500">Visão completa do projeto e principais itens.</p>
+        </div>
 
-  <%= render @onboarding %>
+        <div class="flex items-center gap-3">
+          <div class="flex -space-x-2">
+            <% @onboarding.participants.limit(3).each do |p| %>
+              <%= image_tag avatar_for(p), alt: p.firstname, class: "w-9 h-9 rounded-full ring-2 ring-white shadow-sm" %>
+            <% end %>
+            <% if @onboarding.participants.count > 3 %>
+              <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-sm text-slate-600 ring-2 ring-white">+<%= @onboarding.participants.count - 3 %></div>
+            <% end %>
+          </div>
+          <%= link_to "Editar", edit_onboarding_path(@onboarding), class: "inline-flex items-center px-3 py-2 rounded-md bg-slate-50 hover:bg-slate-100 text-sm font-medium" %>
+          <%= button_to "Excluir", @onboarding, method: :delete, form_class: "inline-block", data: { turbo_confirm: "Are you sure?" }, class: "inline-flex items-center text-sm font-medium px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-500 cursor-pointer" %>
+        </div>
+      </div>
 
-  <p><strong>Última sincronização com Hubspot:</strong></p><%= @onboarding.hubspot_synced_at.strftime("%d/%m/%Y às %H:%M") if @onboarding.hubspot_synced_at.present? %>
+     <div class="mt-6">
+      <div class="bg-blue-600 rounded-xl p-5 shadow-md ring-1 ring-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-white">
+              Progresso de tarefas
+            </h3>
+            <p class="mt-1 text-sm text-blue-100">
+              <%= pluralize(@onboarding.tasks.count, 'tarefa') %> ·
+              <%= @onboarding.completed_tasks.count %> concluídas
+            </p>
+          </div>
 
-  <% if @onboarding.tasks.any? %>
-    <h2 class="font-semibold text-2xl mt-6 mb-4">Tarefas associadas</h2>
-    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
-      <ul>
-        <% @onboarding.tasks.each do |task| %>
-          <li><%= task.subject %> - <span><%= task.status %></span></li>
+          <div class="text-sm font-semibold text-white">
+            <%= @onboarding.progress_percentage %>%
+          </div>
+        </div>
+
+        <!-- Barra de progresso de tarefas -->
+        <div class="mt-4">
+          <div class="w-full bg-blue-500/40 rounded-full h-2.5 overflow-hidden">
+            <div
+              class="h-2.5 rounded-full transition-all"
+              style="width: <%= @onboarding.progress_percentage %>%;
+                    background: linear-gradient(
+                      90deg,
+                      rgba(255,255,255,0.95),
+                      rgba(255,255,255,0.75)
+                    );">
+            </div>
+          </div>
+
+          <p class="mt-2 text-xs text-blue-100">
+            <%=
+              if @onboarding.next_meeting.present?
+                "Próxima reunião: " + @onboarding.next_meeting.start_time.strftime("%d/%m %H:%M")
+              else
+                "Sem próxima reunião agendada"
+              end
+            %>
+          </p>
+        </div>
+
+        <!-- Progresso de reuniões (condicional) -->
+        <% if @onboarding.meetings_limit.present? && @onboarding.meetings_limit > 0 %>
+          <div class="mt-5 pt-4 border-t border-blue-400/40">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                  <h3 class="text-lg font-semibold text-white">
+                    Progresso de reuniões
+                  </h3>
+                <p class="mt-1 text-sm text-blue-100">
+                  <%= pluralize(@onboarding.tasks.count, 'tarefa') %> ·
+                  <%= @onboarding.completed_tasks.count %> concluídas
+                </p>
+              </div>
+
+              <div class="text-xs text-blue-100 font-medium">
+                <%= @onboarding.meetings_percentage %>%
+              </div>
+            </div>
+
+            <div class="mt-2">
+              <div class="w-full bg-blue-500/40 rounded-full h-2 overflow-hidden">
+                <div
+                  class="h-2 rounded-full transition-all"
+                  style="width: <%= @onboarding.meetings_percentage %>%;
+                        background: linear-gradient(
+                          90deg,
+                          rgba(255,255,255,0.95),
+                          rgba(255,255,255,0.75)
+                        );">
+                </div>
+              </div>
+              <p class="mt-2 text-xs text-blue-100">
+                <%=
+                  if @onboarding.next_meeting.present?
+                    "Próxima reunião: " + @onboarding.next_meeting.start_time.strftime("%d/%m %H:%M")
+                  else
+                    "Sem próxima reunião agendada"
+                  end
+                %>
+              </p>
+            </div>
+          </div>
         <% end %>
-      </ul>
+      </div>
     </div>
-  <% end %>
 
-  <% if @onboarding.participants.any? %>
-    <h2 class="font-semibold text-2xl mt-6 mb-4">Participantes associados</h2>
-    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
-      <ul>
-        <% @onboarding.participants.each do |participant| %>
-          <li><%= "#{participant.firstname} #{participant.lastname}" %> - <span><%= participant.email %></span></li>
+
+      <!-- Tasks -->
+      <div class="mt-6 bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-slate-800">Tarefas associadas</h2>
+          <div class="flex items-center gap-2">
+            <%= link_to "Nova tarefa", new_onboarding_task_path(@onboarding), class: "inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-blue-50 hover:bg-blue-100" %>
+          </div>
+        </div>
+        <div>
+          <span class="text-sm text-slate-500"><%= pluralize(@onboarding.tasks.count, 'tarefa') %></span>
+        </div>
+
+        <% if @onboarding.tasks.any? %>
+          <ul class="mt-4 space-y-3">
+            <% @onboarding.tasks.order(Arel.sql("CASE WHEN status = 'COMPLETED' THEN 0 ELSE 1 END"), :due_date).each do |task| %>
+              <li class="flex items-center justify-between border border-slate-50 rounded-lg p-3">
+                <div class="flex items-center gap-4 min-w-0">
+                  <%= form_with model: [@onboarding, task], url: toggle_status_onboarding_task_path(@onboarding, task), method: :patch, local: true do %>
+                    <button type="submit" class="flex items-center justify-center w-6 h-6 border rounded-full <%= 'bg-blue-600 text-white' if task.status == 'COMPLETED' %>">
+                      <% if task.status == 'COMPLETED' %>✓<% end %>
+                    </button>
+                  <% end %>
+
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium <%= 'line-through text-slate-400' if task.status == 'COMPLETED' %>"><%= task.subject %></p>
+                    <p class="text-xs text-slate-400 truncate"><%= task.body.truncate(120) if task.body.present? %></p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                  <span class="text-xs inline-flex items-center px-2 py-1 rounded-full <%= status_badge_class(task.status) %>"><%= status_label(task.status) %></span>
+                  <span class="text-sm text-slate-500"><%= task.due_date.present? ? task.due_date.strftime("%d/%m") : "-" %></span>
+                  <% if task.assignee.present? %>
+                    <%= image_tag avatar_for(task.assignee), class: "w-8 h-8 rounded-full" %>
+                  <% end %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="mt-4 text-sm text-slate-500">Nenhuma tarefa associada ainda.</div>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
+      </div>
 
-  <% if @onboarding.meetings.any? %>
-    <h2 class="font-semibold text-2xl mt-6 mb-4">Reuniões associadas</h2>
-    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
-      <ul>
-        <% @onboarding.meetings.each do |meeting| %>
-          <li><%= meeting.title %> - <span><%= meeting.start_time.strftime("%d/%m/%Y às %H:%M") %> - <%= meeting.outcome %></span></li>
+      <!-- Meetings (lista completa, com ícone) -->
+      <div class="mt-6 bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+            Reuniões
+          </h3>
+          <%= link_to "Ver todas", '#', class: "text-sm text-slate-500" %>
+        </div>
+        <div>
+          <span class="text-sm text-slate-500"><%= pluralize(@onboarding.meetings.count, 'reunião') %></span>
+        </div>
+
+        <% if @onboarding.meetings.any? %>
+          <ul class="mt-4 space-y-3">
+            <% @onboarding.meetings.order(start_time: :desc).each do |m| %>
+              <li class="flex items-start justify-between border border-slate-50 rounded-lg p-3">
+                <div class="flex items-start gap-3 min-w-0">
+                  <div class="flex-shrink-0 mt-0.5">
+                    <%= meeting_icon_svg(classes: "w-6 h-6 text-slate-400") %>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium truncate"><%= m.title %></p>
+                    <p class="text-xs text-slate-400"><%= m.start_time.strftime("%d/%m/%Y às %H:%M") %></p>
+                  </div>
+                </div>
+
+                <div class="text-xs text-slate-400">
+                  <%= m.outcome.presence || (m.start_time >= Time.current ? 'SCHEDULED' : '—') %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="mt-4 text-sm text-slate-500">Nenhuma reunião registrada.</p>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
+      </div>
 
-  <% if @onboarding.emails.any? %>
-    <h2 class="font-semibold text-2xl mt-6 mb-4">E-mails associados</h2>
-    <div class="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg dark:bg-neutral-800">
-      <ul>
-        <% @onboarding.emails.each do |email| %>
-          <li><%= email.subject %> - <span>De: <%= email.from_email %> Para: <%= email.to_email %> - Data: <%= email.timestamp.strftime("%d/%m/%Y às %H:%M") if email.timestamp.present? %></span></li>
+      <!-- Emails (lista completa, com ícone) -->
+      <div class="mt-6 bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+            E-mails
+          </h3>
+          <%= link_to "Ver todos", '#', class: "text-sm text-slate-500" %>
+        </div>
+        <div>
+          <span class="text-sm text-slate-500"><%= pluralize(@onboarding.emails.count, 'e-mail') %></span>
+        </div>
+
+        <% if @onboarding.emails.any? %>
+          <ul class="mt-4 space-y-3 text-sm text-slate-600">
+            <% @onboarding.emails.order(timestamp: :desc).each do |e| %>
+              <li class="flex items-start justify-between border border-slate-50 rounded-lg p-3">
+                <div class="flex items-start gap-3 min-w-0">
+                  <div class="flex-shrink-0 mt-0.5">
+                    <%= email_svg_icon(classes: "w-5 h-5 text-slate-400") %>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="truncate"><strong><%= e.subject.presence || '(sem assunto)' %></strong></p>
+                    <p class="text-xs text-slate-400 truncate">De: <%= e.from_email %> → <%= e.to_email %></p>
+                  </div>
+                </div>
+
+                <div class="text-xs text-slate-400 ml-3"><%= e.timestamp.present? ? e.timestamp.strftime("%d/%m") : '-' %></div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="mt-4 text-sm text-slate-500">Nenhum e-mail associado.</p>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
-  
+      </div>
 
-  <%= link_to "Edit this onboarding", edit_onboarding_path(@onboarding), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to onboardings", onboardings_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= button_to "Destroy this onboarding", @onboarding, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+      <!-- Actions -->
+      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <%= link_to "Voltar para onboardings", onboardings_path, class: "inline-block px-4 py-2 bg-slate-50 rounded-md hover:bg-slate-100" %>
+      </div>
+    </div>
+
+    <!-- Right column: sidebar summary (slightly wider) -->
+    <aside class="w-96 hidden lg:block">
+        <div class="sticky top-8 space-y-4">
+          <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+          <button
+            type="button"
+            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+                  bg-emerald-600 hover:bg-emerald-500
+                  text-white text-sm font-semibold
+                  shadow-sm transition">
+            ✓ Marcar como finalizado
+          </button>
+
+          <p class="mt-2 text-xs text-slate-500 text-center">
+            Finaliza o onboarding quando tudo estiver concluído
+          </p>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+          <h4 class="font-semibold text-slate-800">Datas e prazos</h4>
+          <dl class="mt-2 text-sm text-slate-700">
+            <div class="flex justify-between py-2 border-b border-slate-50">
+              <dt>Início</dt>
+              <dd><%= @onboarding.start_date.present? ? @onboarding.start_date.strftime("%d %b, %Y") : "—" %></dd>
+            </div>
+            <div class="flex justify-between py-2">
+              <dt>Final</dt>
+              <dd><%= @onboarding.end_date.present? ? @onboarding.end_date.strftime("%d %b, %Y") : "—" %></dd>
+            </div>
+            <div class="flex justify-between py-2">
+              <dt>Prazo</dt>
+              <dd><%= @onboarding.due_date.present? ? @onboarding.due_date.strftime("%d %b, %Y") : "—" %></dd>
+            </div>
+            <div class="flex justify-between py-2">
+              <dt>Dias em processo</dt>
+              <dd><%= @onboarding.days_in_progress %></dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+          <h4 class="font-semibold text-slate-800">Próxima reunião</h4>
+          <% if @onboarding.next_meeting.present? %>
+            <div class="mt-3">
+              <p class="font-medium"><%= @onboarding.next_meeting.title %></p>
+              <p class="text-xs text-slate-500 mt-1"><%= @onboarding.next_meeting.start_time.strftime("%d/%m %H:%M") %></p>
+            </div>
+          <% else %>
+            <p class="mt-3 text-sm text-slate-500">Nenhuma reunião futura</p>
+          <% end %>
+        </div>
+
+        <!-- Próxima tarefa -->
+        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+          <h4 class="font-semibold text-slate-800">Próxima tarefa</h4>
+          <% next_task = @onboarding.upcoming_tasks.order(:due_date).first %>
+          <% if next_task.present? %>
+            <div class="mt-3">
+              <p class="font-medium text-sm truncate"><%= next_task.subject %></p>
+              <p class="text-xs text-slate-500 mt-1"><%= next_task.due_date.present? ? next_task.due_date.strftime("%d/%m %H:%M") : 'Sem data' %> · <span class="ml-2 text-xs <%= next_task.status == 'COMPLETED' ? 'text-green-600' : 'text-slate-500' %>"><%= status_label(next_task.status) %></span></p>
+              <div class="mt-3">
+                <%= link_to "Ver tarefa", onboarding_task_path(@onboarding, next_task), class: "text-xs text-blue-600" %>
+              </div>
+            </div>
+          <% else %>
+            <p class="mt-3 text-sm text-slate-500">Nenhuma tarefa agendada</p>
+          <% end %>
+        </div>
+
+        <!-- Participantes (sidebar) -->
+        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold text-slate-800">Participantes</h4>
+            <%= link_to "Gerenciar", onboarding_participants_path(@onboarding), class: "text-xs text-slate-500" %>
+          </div>
+
+          <% if @onboarding.participants.any? %>
+            <ul class="mt-3 divide-y divide-slate-100">
+              <% @onboarding.participants.limit(4).each do |p| %>
+                <li class="py-3 flex items-center justify-between">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <%= image_tag avatar_for(p), class: "w-7 h-7 rounded-full flex-shrink-0" %>
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium truncate"><%= "#{p.firstname} #{p.lastname}" %></p>
+                      <p class="text-xs text-slate-400 truncate"><%= p.email %></p>
+                    </div>
+                  </div>
+                  <div class="text-xs text-slate-400"><%= p.role.presence || '—' %></div>
+                </li>
+              <% end %>
+            </ul>
+
+            <% if @onboarding.participants.count > 4 %>
+              <div class="mt-3 text-sm text-slate-500">+<%= @onboarding.participants.count - 4 %> restantes</div>
+            <% end %>
+          <% else %>
+            <p class="mt-3 text-sm text-slate-500">Nenhum participante adicionado.</p>
+          <% end %>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

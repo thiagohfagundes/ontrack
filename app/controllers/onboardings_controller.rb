@@ -66,6 +66,6 @@ class OnboardingsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def onboarding_params
-      params.expect(onboarding: [ :title, :description, :hubspot_id ])
+      params.expect(onboarding: [ :title, :description, :hubspot_id, :start_date, :due_date ])
     end
 end

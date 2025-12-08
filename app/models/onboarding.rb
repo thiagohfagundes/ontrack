@@ -18,7 +18,37 @@ class Onboarding < ApplicationRecord
   def progress_percentage
     total_tasks = tasks.count
     return 0 if total_tasks.zero?
-    (completed_tasks.count.to_f / total_tasks * 100).round
+    total = (completed_tasks.count.to_f / total_tasks * 100).round
+    if total == 100 && !closed
+      99
+    else
+      total
+    end
+  end
+
+  def meetings_percentage
+    total_meetings = meetings.count
+    return 0 if total_meetings.zero?
+    percentage = (total_meetings * 100 / meetings_limit).round
+    if percentage > 100
+      100
+    else
+      percentage
+    end
+  end
+
+  def overdue?
+    overdue_tasks.exists?
+  end
+
+  def days_in_progress
+    if start_date.present? && end_date.present?
+      (end_date.to_date - start_date.to_date).to_i
+    elsif start_date.present?
+      (Date.current - start_date.to_date).to_i
+    else
+      0
+    end
   end
 
   private

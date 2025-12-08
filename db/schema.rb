@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_04_125517) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_08_185016) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -68,6 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_125517) do
     t.datetime "end_time"
     t.string "hubspot_id"
     t.text "internal_notes"
+    t.string "location"
     t.integer "onboarding_id", null: false
     t.string "outcome"
     t.datetime "start_time"
@@ -77,11 +78,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_125517) do
   end
 
   create_table "onboardings", force: :cascade do |t|
+    t.boolean "closed", default: false
     t.datetime "created_at", null: false
     t.text "description"
     t.datetime "due_date"
+    t.datetime "end_date"
     t.string "hubspot_id"
     t.datetime "hubspot_synced_at"
+    t.integer "meetings_limit"
+    t.datetime "start_date"
     t.string "title"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
@@ -97,11 +102,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_125517) do
     t.string "lastname"
     t.integer "onboarding_id", null: false
     t.string "phone"
+    t.string "role"
     t.datetime "updated_at", null: false
     t.index ["onboarding_id"], name: "index_participants_on_onboarding_id"
   end
 
   create_table "tasks", force: :cascade do |t|
+    t.string "assignee"
     t.text "body"
     t.datetime "completion_date"
     t.datetime "created_at", null: false
