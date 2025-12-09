@@ -9,11 +9,13 @@ class Onboarding < ApplicationRecord
   has_many :today_tasks, -> { where(due_date: Date.today, status: 'PENDING') }, class_name: 'Task'
   has_many :participants, dependent: :destroy
   has_many :meetings, dependent: :destroy
+  has_many :completed_meetings, -> { where(outcome: 'COMPLETED') }, class_name: 'Meeting'
   has_one :latest_meeting, -> { order(start_time: :desc) }, class_name: 'Meeting'
   has_one :next_meeting, -> { where("start_time >= ?", Time.current).order(start_time: :asc) }, class_name: 'Meeting'
   has_one :last_meeting, -> { where("start_time < ?", Time.current).order(start_time: :desc) }, class_name: 'Meeting'
   has_many :emails, dependent: :destroy
   has_one :latest_email, -> { order(timestamp: :desc) }, class_name: 'Email'
+  has_one :next_pending_task, -> { where("due_date >= ? AND status != ?", Date.today, 'COMPLETED').order(due_date: :asc)}, class_name: 'Task'
 
   def progress_percentage
     total_tasks = tasks.count
@@ -60,6 +62,7 @@ class Onboarding < ApplicationRecord
       participantes = hubspot.get_associated_contacts(hubspot_id)
       reunioes = hubspot.get_associated_meetings(hubspot_id)
       emails_trocados = hubspot.get_associated_emails(hubspot_id)
+      notas = hubspot.get_associated_notes(hubspot_id)
 
       tarefas.each do |task|
         tasks.create(
@@ -68,6 +71,7 @@ class Onboarding < ApplicationRecord
           status: task["hs_task_status"],
           due_date: task["hs_task_due_date"]&.to_date,
           completion_date: task["hs_task_completion_date"]&.to_date,
+          task_type: task["hs_task_type"],
           onboarding_id: id,
           hubspot_id: task["hs_object_id"]
         )

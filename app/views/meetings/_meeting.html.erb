@@ -1,0 +1,60 @@
+<% onboarding = meeting.try(:onboarding) %>
+
+<article class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+  <header class="flex items-start justify-between gap-4">
+    <div class="flex items-start gap-3 min-w-0">
+      <div class="flex-shrink-0 mt-0.5">
+        <%= meeting_icon_svg(classes: "w-9 h-9 text-slate-500") %>
+      </div>
+
+      <div class="min-w-0">
+        <h4 class="text-sm font-semibold text-slate-900 truncate">
+          <%= link_to meeting.title.presence || "(sem título)", (onboarding ? onboarding_meeting_path(onboarding, meeting) : meeting_path(meeting)), class: "hover:underline" %>
+        </h4>
+
+        <% if meeting.start_time.present? %>
+          <p class="text-xs text-slate-500 truncate">
+            <%= l(meeting.start_time, format: :short) %>
+            <% if meeting.end_time.present? %> · até <%= l(meeting.end_time, format: :short) %><% end %>
+          </p>
+        <% else %>
+          <p class="text-xs text-slate-500">Horário não informado</p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-end gap-1">
+      <span class="text-xs inline-flex items-center px-2 py-1 rounded-full bg-slate-100 text-slate-700"><%= meeting.location.presence || "—" %></span>
+      <span class="text-xs text-slate-500"><%= meeting.hubspot_id.presence || '—' %></span>
+    </div>
+  </header>
+
+  <% if meeting.body.present? %>
+    <div class="mt-3 text-sm text-slate-700 leading-relaxed">
+      <%= simple_format(meeting.body) %>
+    </div>
+  <% end %>
+
+  <% if meeting.internal_notes.present? %>
+    <div class="mt-3 p-3 bg-slate-50 rounded-md text-sm text-slate-600">
+      <strong class="text-xs text-slate-500">Notas internas</strong>
+      <div class="mt-1"><%= simple_format(meeting.internal_notes) %></div>
+    </div>
+  <% end %>
+
+  <footer class="mt-4 flex items-center justify-between gap-3">
+    <div class="text-xs text-slate-500">
+      Resultado: <span class="text-slate-700"><%= meeting.outcome.presence || '—' %></span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <% if onboarding %>
+        <%= link_to "Ver", onboarding_meeting_path(onboarding, meeting), class: "text-xs px-3 py-1.5 rounded-md bg-slate-50 hover:bg-slate-100" %>
+        <%= link_to "Editar", edit_onboarding_meeting_path(onboarding, meeting), class: "text-xs px-3 py-1.5 rounded-md bg-amber-50 hover:bg-amber-100" %>
+      <% else %>
+        <%= link_to "Ver", meeting_path(meeting), class: "text-xs px-3 py-1.5 rounded-md bg-slate-50 hover:bg-slate-100" %>
+        <%= link_to "Editar", edit_meeting_path(meeting), class: "text-xs px-3 py-1.5 rounded-md bg-amber-50 hover:bg-amber-100" %>
+      <% end %>
+    </div>
+  </footer>
+</article>

@@ -1,0 +1,92 @@
+<%# expects a local variable `task` (Task instance) %>
+
+<div class="bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+  <div class="flex items-start justify-between gap-4">
+    <!-- Left: subject + body -->
+    <div class="min-w-0">
+      <div class="flex items-center gap-3">
+        <h3 class="text-lg font-semibold text-slate-800 truncate"><%= task.subject.presence || "(sem assunto)" %></h3>
+
+        <%# status badge %>
+        <span class="text-xs inline-flex items-center px-2 py-1 rounded-full <%= status_badge_class(task.status) %>">
+          <%= status_label(task.status) %>
+        </span>
+      </div>
+
+      <% if task.body.present? %>
+        <p class="mt-3 text-sm text-slate-600 leading-relaxed"><%= simple_format(task.body) %></p>
+      <% else %>
+        <p class="mt-3 text-sm text-slate-400 italic">Sem descrição.</p>
+      <% end %>
+
+      <!-- meta row -->
+      <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+        <%# assignee (string) - show avatar + name if present %>
+        <% if task.assignee.present? %>
+          <div class="flex items-center gap-2">
+            <%= image_tag "https://ui-avatars.com/api/?name=#{ERB::Util.url_encode(task.assignee)}&background=DDDDDD&color=555555&size=64",
+                          class: "w-6 h-6 rounded-full flex-shrink-0", alt: task.assignee %>
+            <span class="truncate max-w-[10rem]"><%= task.assignee %></span>
+          </div>
+        <% end %>
+
+        <%# due date %>
+        <div>
+          <strong class="text-xs text-slate-600">Vencimento:</strong>
+          <span class="ml-1"><%= task.due_date.present? ? task.due_date.strftime("%d/%m/%Y") : "—" %></span>
+        </div>
+
+        <%# completion date %>
+        <div>
+          <strong class="text-xs text-slate-600">Concluída:</strong>
+          <span class="ml-1"><%= task.completion_date.present? ? task.completion_date.strftime("%d/%m/%Y") : "—" %></span>
+        </div>
+
+        <%# type and hubspot id if exist %>
+        <% if task.task_type.present? %>
+          <div>
+            <strong class="text-xs text-slate-600">Tipo:</strong>
+            <span class="ml-1"><%= task.task_type %></span>
+          </div>
+        <% end %>
+
+        <% if task.hubspot_id.present? %>
+          <div>
+            <strong class="text-xs text-slate-600">HubSpot:</strong>
+            <span class="ml-1"><%= task.hubspot_id %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Right: actions -->
+    <div class="flex-shrink-0 flex flex-col items-end gap-3">
+      <div class="flex flex-col items-stretch gap-2 w-40">
+        <%# Toggle status form (uses your toggle_status member route) %>
+        <%= form_with model: [task.onboarding, task], url: toggle_status_onboarding_task_path(task.onboarding, task), method: :patch, local: true do %>
+          <button type="submit"
+                  class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border
+                         <%= task.status == 'COMPLETED' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50' %>">
+            <% if task.status == 'COMPLETED' %>
+              ✓
+            <% else %>
+              ○
+            <% end %>
+            <span class="text-sm"><%= task.status == 'COMPLETED' ? 'Marcada' : 'Marcar concluída' %></span>
+          </button>
+        <% end %>
+
+        <%= link_to "Editar", edit_onboarding_task_path(task.onboarding, task),
+                    class: "w-full text-center inline-flex items-center justify-center px-3 py-2 rounded-md bg-amber-50 hover:bg-amber-100 text-sm font-medium border border-amber-100" %>
+
+        <%= link_to "Ver no onboarding", onboarding_path(task.onboarding), class: "w-full text-center inline-flex items-center justify-center px-3 py-2 rounded-md bg-slate-50 hover:bg-slate-100 text-sm" %>
+      </div>
+
+      <div class="text-xs text-slate-400 text-right">
+        Criada em <%= task.created_at.strftime("%d/%m/%Y") %><br>
+        Atualizada <%= time_ago_in_words(task.updated_at) %> atrás
+      </div>
+    </div>
+  </div>
+</div>
+

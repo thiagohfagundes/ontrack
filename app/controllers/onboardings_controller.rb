@@ -1,6 +1,6 @@
 class OnboardingsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_onboarding, only: %i[ show edit update destroy ]
+  before_action :set_onboarding, only: %i[ show edit update destroy visibility update_visibility ]
 
   # GET /onboardings or /onboardings.json
   def index
@@ -18,6 +18,18 @@ class OnboardingsController < ApplicationController
 
   # GET /onboardings/1/edit
   def edit
+  end
+
+  def visibility
+  end
+
+  def update_visibility
+    if @onboarding.update(visibility_params)
+      redirect_to @onboarding, notice: "Visibilidade atualizada"
+    else
+      flash.now[:alert] = @onboarding.errors.full_messages.to_sentence
+      render :visibility
+    end
   end
 
   # POST /onboardings or /onboardings.json
@@ -67,5 +79,17 @@ class OnboardingsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def onboarding_params
       params.expect(onboarding: [ :title, :description, :hubspot_id, :start_date, :due_date ])
+    end
+
+    def visibility_params
+      params.require(:onboarding).permit(
+        :info_visible,
+        :emails_visible,
+        :participants_visible,
+        :notes_visible,
+        :meetings_visible,
+        :progress_visible,
+        :dates_visible
+      )
     end
 end

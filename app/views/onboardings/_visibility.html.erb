@@ -1,0 +1,48 @@
+<%= form_with(model: @onboarding, url: update_visibility_onboarding_path(@onboarding), method: :patch, local: true, class: "contents") do |form| %>
+  <% if onboarding.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(onboarding.errors.count, "error") %> prohibited this onboarding from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% onboarding.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+    <%# Switch helper block reused para cada campo %>
+    <% [
+      [:info_visible,         "Informações gerais", "Mostrar título/descrição do onboarding"],
+      [:emails_visible,       "E-mails",            "Mostrar lista de e-mails"],
+      [:participants_visible, "Participantes",      "Mostrar lista de participantes"],
+      [:notes_visible,        "Notas",              "Mostrar notas internas"],
+      [:meetings_visible,     "Reuniões",           "Mostrar lista de reuniões"],
+      [:progress_visible,     "Progresso",          "Mostrar barras de progresso"],
+      [:dates_visible,        "Datas",              "Mostrar datas importantes"]
+    ].each do |attr, label, hint| %>
+      <div class="bg-white rounded-lg p-4 shadow-sm ring-1 ring-slate-100 flex items-start gap-4">
+        <div class="flex-1">
+          <p class="text-sm font-medium text-slate-800"><%= label %></p>
+          <p class="text-xs text-slate-500 mt-1"><%= hint %></p>
+        </div>
+
+        <div class="flex items-center">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <%# Rails gera um hidden_field para o checkbox por padrão, garantindo false quando desmarcado %>
+            <%= form.check_box attr, class: "sr-only peer", aria: { labelledby: "#{attr}_label" } %>
+
+            <%# visual switch %>
+            <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-600 peer-focus:ring-2 peer-focus:ring-blue-300 transition-colors"></div>
+            <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transform peer-checked:translate-x-5 transition-transform"></div>
+          </label>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <%= form.submit "Salvar configurações", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
