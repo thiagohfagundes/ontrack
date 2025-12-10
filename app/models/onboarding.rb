@@ -17,6 +17,18 @@ class Onboarding < ApplicationRecord
   has_one :latest_email, -> { order(timestamp: :desc) }, class_name: 'Email'
   has_one :next_pending_task, -> { where("due_date >= ? AND status != ?", Date.today, 'COMPLETED').order(due_date: :asc)}, class_name: 'Task'
 
+  def process_date_status
+    return 'Não iniciado' if start_date.nil?
+    return 'Completo' if closed
+    if end_date.present? && end_date < Date.today
+      'Atrasado'
+    elsif due_date.present? && due_date < Date.today
+      'Em risco'
+    else
+      'Em dia'
+    end
+  end
+
   def progress_percentage
     total_tasks = tasks.count
     return 0 if total_tasks.zero?
@@ -73,7 +85,8 @@ class Onboarding < ApplicationRecord
           completion_date: task["hs_task_completion_date"]&.to_date,
           task_type: task["hs_task_type"],
           onboarding_id: id,
-          hubspot_id: task["hs_object_id"]
+          hubspot_id: task["hs_object_id"],
+          user_id: user_id
         )
       end
 
@@ -105,10 +118,14 @@ class Onboarding < ApplicationRecord
       emails_trocados.each do |email|
         emails.create(
           from_email: email["hs_email_from_email"],
+          email_from_firstname: email["hs_email_from_firstname"],
+          email_from_lastname: email["hs_email_from_lastname"],
+          email_to_firstname: email["hs_email_to_firstname"],
+          email_to_lastname: email["hs_email_to_lastname"],
           to_email: email["hs_email_to_email"],
           subject: email["hs_email_subject"],
-          body_text: email["hs_email_text_body"],
-          body_html: email["hs_email_html_body"],
+          body_text: email["hs_email_text"],
+          body_html: email["hs_email_html"],
           email_status: email["hs_email_status"],
           email_direction: email["hs_email_direction"],
           timestamp: email["hs_timestamp"]&.to_datetime,

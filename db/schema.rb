@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_09_171501) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_10_174017) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -52,7 +52,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_171501) do
     t.text "body_text"
     t.datetime "created_at", null: false
     t.string "email_direction"
+    t.string "email_from_firstname"
+    t.string "email_from_lastname"
     t.string "email_status"
+    t.string "email_to_firstname"
+    t.string "email_to_lastname"
     t.string "from_email"
     t.integer "onboarding_id", null: false
     t.string "subject"
@@ -116,17 +120,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_171501) do
 
   create_table "tasks", force: :cascade do |t|
     t.string "assignee"
+    t.integer "assignee_id"
     t.text "body"
     t.datetime "completion_date"
     t.datetime "created_at", null: false
     t.datetime "due_date"
     t.string "hubspot_id"
     t.integer "onboarding_id", null: false
+    t.string "priority"
+    t.datetime "reminder"
     t.string "status"
     t.string "subject"
     t.string "task_type"
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.boolean "visibility", default: true, null: false
+    t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["onboarding_id"], name: "index_tasks_on_onboarding_id"
+    t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
   create_table "templates", force: :cascade do |t|
@@ -164,5 +175,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_09_171501) do
   add_foreign_key "onboardings", "users"
   add_foreign_key "participants", "onboardings"
   add_foreign_key "tasks", "onboardings"
+  add_foreign_key "tasks", "users"
   add_foreign_key "templates", "users"
 end

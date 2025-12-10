@@ -53,4 +53,31 @@ module OnboardingsHelper
       </svg>
     SVG
   end
+
+  def process_status_badge(onboarding)
+    status = onboarding.process_date_status
+
+    badge_classes =
+      case status
+      when 'Não iniciado'
+        'bg-slate-100 text-slate-600 ring-slate-200'
+      when 'Em dia'
+        'bg-emerald-50 text-emerald-700 ring-emerald-200'
+      when 'Em risco'
+        'bg-amber-50 text-amber-700 ring-amber-200'
+      when 'Atrasado'
+        'bg-red-50 text-red-700 ring-red-200'
+      when 'Completo'
+        'bg-blue-50 text-blue-700 ring-blue-200'
+      else
+        'bg-slate-100 text-slate-600 ring-slate-200'
+      end
+
+    content_tag(
+      :span,
+      status,
+      class: "inline-flex items-center px-2.5 py-1 rounded-full
+              text-xs font-medium ring-1 #{badge_classes}"
+    )
+  end
 end

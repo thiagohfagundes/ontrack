@@ -17,7 +17,7 @@
         <div class="flex items-center gap-3">
           <div class="flex -space-x-2">
             <% @onboarding.participants.limit(3).each do |p| %>
-              <%= image_tag avatar_for(p), alt: p.firstname, class: "w-9 h-9 rounded-full ring-2 ring-white shadow-sm" %>
+              <%= image_tag avatar_for(p), alt: p.firstname, class: "w-9 h-9 rounded-full ring-2 ring-white shadow-md" %>
             <% end %>
             <% if @onboarding.participants.count > 3 %>
               <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-sm text-slate-600 ring-2 ring-white">+<%= @onboarding.participants.count - 3 %></div>
@@ -33,7 +33,7 @@
            Informações gerais (visibilidade)
            ----------------------- %>
       <% if @onboarding.info_visible %>
-        <div class="mt-6 mb-6 bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+        <div class="mt-6 mb-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100">
           <h3 class="text-lg font-semibold text-slate-800 mb-4">Informações gerais</h3>
 
           <div class="space-y-4">
@@ -121,7 +121,7 @@
       <%# -----------------------
            Tasks (mantive sempre visível — se quiser, adicione tasks_visible)
            ----------------------- %>
-      <div class="mt-6 bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+      <div class="mt-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-slate-800">Tarefas</h2>
           <div class="flex items-center gap-2">
@@ -167,7 +167,7 @@
            Meetings (visibilidade)
            ----------------------- %>
       <% if @onboarding.meetings_visible %>
-        <div class="mt-6 bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+        <div class="mt-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-slate-800">
               Reuniões
@@ -203,7 +203,7 @@
            Emails (visibilidade)
            ----------------------- %>
       <% if @onboarding.emails_visible %>
-        <div class="mt-6 bg-white rounded-xl p-6 shadow-sm ring-1 ring-slate-100">
+        <div class="mt-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-slate-800">E-mails</h2>
             <%= link_to "Ver todos", onboarding_emails_path(@onboarding), class: "text-sm text-slate-500" %>
@@ -242,14 +242,14 @@
     <!-- Right column: sidebar summary -->
     <aside class="w-96 hidden lg:block">
       <div class="sticky top-8 space-y-4">
-        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
-          <button type="button" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-sm transition">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
+          <button type="button" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-md transition">
             ✓ Marcar como finalizado
           </button>
           <p class="mt-2 text-xs text-slate-500 text-center">Finaliza o onboarding quando tudo estiver concluído</p>
         </div>
 
-        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
           <h4 class="font-semibold text-slate-800 mb-4">Responsável pelo onboarding</h4>
           <% if @onboarding.user.present? %>
             <div class="flex items-center gap-3">
@@ -270,21 +270,28 @@
         </div>
 
         <% if @onboarding.dates_visible %>
-          <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
-            <h4 class="font-semibold text-slate-800">Datas e prazos</h4>
-            <dl class="mt-2 text-sm text-slate-700">
+          <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
+            <div class="flex items-center justify-between">
+              <h4 class="font-semibold text-slate-800">Datas e prazos</h4>
+              <%= process_status_badge(@onboarding) %>
+            </div>
+
+            <dl class="mt-3 text-sm text-slate-700">
               <div class="flex justify-between py-2 border-b border-slate-50">
                 <dt>Início</dt>
                 <dd><%= @onboarding.start_date.present? ? @onboarding.start_date.strftime("%d %b, %Y") : "—" %></dd>
               </div>
-              <div class="flex justify-between py-2">
-                <dt>Final</dt>
-                <dd><%= @onboarding.end_date.present? ? @onboarding.end_date.strftime("%d %b, %Y") : "—" %></dd>
-              </div>
+
               <div class="flex justify-between py-2">
                 <dt>Prazo</dt>
                 <dd><%= @onboarding.due_date.present? ? @onboarding.due_date.strftime("%d %b, %Y") : "—" %></dd>
               </div>
+
+              <div class="flex justify-between py-2">
+                <dt>Final</dt>
+                <dd><%= @onboarding.end_date.present? ? @onboarding.end_date.strftime("%d %b, %Y") : "—" %></dd>
+              </div>
+
               <div class="flex justify-between py-2">
                 <dt>Dias em processo</dt>
                 <dd><%= @onboarding.days_in_progress %></dd>
@@ -293,7 +300,7 @@
           </div>
         <% end %>
 
-        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
           <h4 class="font-semibold text-slate-800">Próxima reunião</h4>
           <% if @onboarding.next_meeting.present? %>
             <div class="mt-3">
@@ -305,7 +312,7 @@
           <% end %>
         </div>
 
-        <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
           <h4 class="font-semibold text-slate-800">Próxima tarefa</h4>
           <% next_task = @onboarding.upcoming_tasks.order(:due_date).first %>
           <% if next_task.present? %>
@@ -320,7 +327,7 @@
         </div>
 
         <% if @onboarding.participants_visible %>
-          <div class="bg-white rounded-xl p-4 shadow-sm ring-1 ring-slate-100">
+          <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
             <div class="flex items-center justify-between">
               <h4 class="font-semibold text-slate-800">Participantes</h4>
               <%= link_to "Gerenciar", onboarding_participants_path(@onboarding), class: "text-xs text-slate-500" %>
