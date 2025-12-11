@@ -40,6 +40,13 @@ class Onboarding < ApplicationRecord
     end
   end
 
+  def stakeholders_emails
+    owner_email = user.email
+    participant_emails = participants.pluck(:email).reject(&:blank?)
+    emails = [owner_email] + participant_emails
+    emails.uniq
+  end
+
   def meetings_percentage
     total_meetings = meetings.count
     return 0 if total_meetings.zero?

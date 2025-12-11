@@ -14,6 +14,8 @@ class OnboardingsController < ApplicationController
   # GET /onboardings/new
   def new
     @onboarding = Onboarding.new
+    hubspot = Hubspot.new(ENV['HUBSPOT_API_KEY'])
+    @hubspot_tickets = hubspot.get_ongoing_onboardings(ENV['HUBSPOT_PIPELINE_ID'])
   end
 
   # GET /onboardings/1/edit

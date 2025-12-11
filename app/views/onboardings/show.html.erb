@@ -33,7 +33,7 @@
            Informações gerais (visibilidade)
            ----------------------- %>
       <% if @onboarding.info_visible %>
-        <div class="mt-6 mb-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100">
+        <div class="mt-6 mb-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100 dark:bg-neutral-800 dark:ring-neutral-700">
           <h3 class="text-lg font-semibold text-slate-800 mb-4">Informações gerais</h3>
 
           <div class="space-y-4">
@@ -55,7 +55,7 @@
            ----------------------- %>
       <% if @onboarding.progress_visible %>
         <div class="mt-6">
-          <div class="bg-blue-600 rounded-xl p-5 shadow-md ring-1 ring-blue-500">
+          <div class="bg-blue-600 rounded-xl p-5 shadow-md ring-1 ring-blue-500 dark:bg-neutral-800 dark:ring-neutral-700">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <h3 class="text-lg font-semibold text-white">Progresso de tarefas</h3>
@@ -122,7 +122,7 @@
            Tasks (mantive sempre visível — se quiser, adicione tasks_visible)
            ----------------------- %>
       <div class="mt-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between dark:bg-neutral-800 dark:ring-neutral-700">
           <h2 class="text-xl font-semibold text-slate-800">Tarefas</h2>
           <div class="flex items-center gap-2">
             <%= link_to "Nova tarefa", new_onboarding_task_path(@onboarding), class: "inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-blue-50 hover:bg-blue-100" %>
@@ -134,7 +134,7 @@
         <% if @onboarding.tasks.any? %>
           <ul class="mt-4 space-y-3">
             <% @onboarding.tasks.order(Arel.sql("CASE WHEN status = 'COMPLETED' THEN 0 ELSE 1 END"), :due_date).each do |task| %>
-              <li class="group flex items-center justify-between border border-slate-50 rounded-lg p-3 hover:bg-slate-50 cursor-pointer transition-colors">
+              <li class="group flex items-center justify-between border border-slate-50 dark:border-neutral-700 rounded-lg p-3 hover:bg-slate-50 dark:hover:bg-neutral-700 cursor-pointer transition-colors">
                 <div class="flex items-center gap-4 min-w-0">
                   <%= form_with model: [@onboarding, task], url: toggle_status_onboarding_task_path(@onboarding, task), method: :patch, local: true do %>
                     <button type="submit" class="flex items-center justify-center w-6 h-6 border rounded-full <%= 'bg-blue-600 text-white' if task.status == 'COMPLETED' %>">
@@ -168,7 +168,7 @@
            ----------------------- %>
       <% if @onboarding.meetings_visible %>
         <div class="mt-6 bg-white rounded-xl p-6 shadow-md ring-1 ring-slate-100">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between dark:bg-neutral-800 dark:ring-neutral-700">
             <h2 class="text-xl font-semibold text-slate-800">
               Reuniões
             </h2>
@@ -180,7 +180,7 @@
           <% if @onboarding.meetings.any? %>
             <ul class="mt-4 space-y-3">
               <% @onboarding.meetings.order(start_time: :desc).each do |m| %>
-                <li class="group flex items-start justify-between border border-slate-50 rounded-lg p-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                <li class="group flex items-start justify-between border border-slate-50 dark:border-neutral-700 rounded-lg p-3 hover:bg-slate-50 dark:hover:bg-neutral-700 cursor-pointer transition-colors">
                   <div class="flex items-start gap-3 min-w-0">
                     <div class="flex-shrink-0 mt-0.5"><%= meeting_icon_svg(classes: "w-6 h-6 text-slate-400") %></div>
                     <div class="min-w-0">
@@ -214,7 +214,7 @@
           <% if @onboarding.emails.any? %>
             <ul class="mt-4 space-y-3 text-sm text-slate-600">
               <% @onboarding.emails.order(timestamp: :desc).each do |e| %>
-                <li class="group flex items-start justify-between border border-slate-50 rounded-lg p-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                <li class="group flex items-start justify-between border border-slate-50 dark:border-neutral-700 rounded-lg p-3 hover:bg-slate-50 dark:hover:bg-neutral-700 cursor-pointer transition-colors">
                   <div class="flex items-start gap-3 min-w-0">
                     <div class="flex-shrink-0 mt-0.5"><%= email_svg_icon(classes: "w-5 h-5 text-slate-400") %></div>
                     <div class="min-w-0">
@@ -242,14 +242,14 @@
     <!-- Right column: sidebar summary -->
     <aside class="w-96 hidden lg:block">
       <div class="sticky top-8 space-y-4">
-        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100 dark:bg-neutral-800 dark:ring-neutral-700">
           <button type="button" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-md transition">
             ✓ Marcar como finalizado
           </button>
           <p class="mt-2 text-xs text-slate-500 text-center">Finaliza o onboarding quando tudo estiver concluído</p>
         </div>
 
-        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100 dark:bg-neutral-800 dark:ring-neutral-700">
           <h4 class="font-semibold text-slate-800 mb-4">Responsável pelo onboarding</h4>
           <% if @onboarding.user.present? %>
             <div class="flex items-center gap-3">
@@ -270,7 +270,7 @@
         </div>
 
         <% if @onboarding.dates_visible %>
-          <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
+          <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100 dark:bg-neutral-800 dark:ring-neutral-700">
             <div class="flex items-center justify-between">
               <h4 class="font-semibold text-slate-800">Datas e prazos</h4>
               <%= process_status_badge(@onboarding) %>
@@ -300,7 +300,7 @@
           </div>
         <% end %>
 
-        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100 dark:bg-neutral-800 dark:ring-neutral-700">
           <h4 class="font-semibold text-slate-800">Próxima reunião</h4>
           <% if @onboarding.next_meeting.present? %>
             <div class="mt-3">
@@ -312,7 +312,7 @@
           <% end %>
         </div>
 
-        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100">
+        <div class="bg-white rounded-xl p-4 shadow-md ring-1 ring-slate-100 dark:bg-neutral-800 dark:ring-neutral-700">
           <h4 class="font-semibold text-slate-800">Próxima tarefa</h4>
           <% next_task = @onboarding.upcoming_tasks.order(:due_date).first %>
           <% if next_task.present? %>

@@ -1,42 +1,123 @@
 <%= form_with(model: onboarding, class: "contents") do |form| %>
   <% if onboarding.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(onboarding.errors.count, "error") %> prohibited this onboarding from being saved:</h2>
+    <div id="error_explanation" class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950">
+      <h2 class="flex items-center text-sm font-semibold text-red-800 dark:text-red-200">
+        <svg class="mr-2 h-5 w-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <%= pluralize(onboarding.errors.count, "erro") %> encontrado
+      </h2>
 
-      <ul class="list-disc ml-6">
+      <ul class="mt-2 list-inside space-y-1">
         <% onboarding.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+          <li class="text-sm text-red-700 dark:text-red-300"><%= error.full_message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="my-5">
-    <%= form.label :title %>
-    <%= form.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": onboarding.errors[:title].none?, "border-red-400 focus:outline-red-600": onboarding.errors[:title].any?}] %>
-  </div>
+  <div class="space-y-6">
+    <!-- Seção: Informações Principais -->
+    <fieldset>
+      <legend class="mb-4 text-sm font-semibold text-gray-900 dark:text-neutral-100">Informações Principais</legend>
+      
+      <div class="space-y-4">
+        <div>
+          <%= form.label :title, "Título do Onboarding", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+          <%= form.text_field :title, 
+              placeholder: "Ex: Onboarding de Desenvolvimento",
+              class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none", 
+                      {"border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400": onboarding.errors[:title].none?, 
+                       "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": onboarding.errors[:title].any?}] %>
+          <% if onboarding.errors[:title].any? %>
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= onboarding.errors[:title].first %></p>
+          <% end %>
+        </div>
 
-  <div class="my-5">
-    <%= form.label :description %>
-    <%= form.textarea :description, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": onboarding.errors[:description].none?, "border-red-400 focus:outline-red-600": onboarding.errors[:description].any?}] %>
-  </div>
+        <div>
+          <%= form.label :description, "Descrição", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+          <%= form.textarea :description, 
+              rows: 4,
+              placeholder: "Descreva os detalhes do onboarding...",
+              class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none resize-none", 
+                      {"border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400": onboarding.errors[:description].none?, 
+                       "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": onboarding.errors[:description].any?}] %>
+          <% if onboarding.errors[:description].any? %>
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= onboarding.errors[:description].first %></p>
+          <% end %>
+        </div>
+      </div>
+    </fieldset>
 
-  <div class="my-5">
-    <%= form.label :hubspot_id %>
-    <%= form.text_field :hubspot_id, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": onboarding.errors[:hubspot_id].none?, "border-red-400 focus:outline-red-600": onboarding.errors[:hubspot_id].any?}] %>
-  </div>
+    <!-- Seção: Integração e Timeline -->
+    <fieldset class="border-t border-gray-200 pt-6 dark:border-neutral-700">
+      <legend class="mb-4 text-sm font-semibold text-gray-900 dark:text-neutral-100">Integração e Timeline</legend>
+      
+      <div class="space-y-4">
+        <div>
+          <%= form.label :hubspot_id, "Ticket do HubSpot", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+          <div class="relative">
+            <%= form.text_field :hubspot_id, 
+                list: "hubspot-tickets-list",
+                placeholder: "Digite para buscar um ticket...",
+                class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none", 
+                        {"border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400": onboarding.errors[:hubspot_id].none?, 
+                         "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": onboarding.errors[:hubspot_id].any?}] 
+            %>
+            <datalist id="hubspot-tickets-list">
+              <% @hubspot_tickets.each do |ticket| %>
+                <option value="<%= ticket['hs_object_id'] %>">
+                  <%= ticket['subject'] %>
+                </option>
+              <% end %>
+            </datalist>
+          </div>
+          <% if onboarding.errors[:hubspot_id].any? %>
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= onboarding.errors[:hubspot_id].first %></p>
+          <% end %>
+          <p class="mt-1.5 text-xs text-gray-500 dark:text-neutral-400">Selecione um ticket do HubSpot para associar a este onboarding</p>
+        </div>
 
-  <div class="my-5">
-    <%= form.label :start_date %>
-    <%= form.date_field :start_date, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": onboarding.errors[:start_date].none?, "border-red-400 focus:outline-red-600": onboarding.errors[:start_date].any?}] %>
-  </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <%= form.label :start_date, "Data de Início", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+            <%= form.date_field :start_date, 
+                class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none", 
+                        {"border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100": onboarding.errors[:start_date].none?, 
+                         "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": onboarding.errors[:start_date].any?}] 
+            %>
+            <% if onboarding.errors[:start_date].any? %>
+              <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= onboarding.errors[:start_date].first %></p>
+            <% end %>
+          </div>
 
-  <div class="my-5">
-    <%= form.label :due_date %>
-    <%= form.date_field :due_date, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": onboarding.errors[:due_date].none?, "border-red-400 focus:outline-red-600": onboarding.errors[:due_date].any?}] %>
-  </div>
+          <div>
+            <%= form.label :due_date, "Data de Conclusão", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+            <%= form.date_field :due_date, 
+                class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none", 
+                        {"border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100": onboarding.errors[:due_date].none?, 
+                         "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": onboarding.errors[:due_date].any?}] 
+            %>
+            <% if onboarding.errors[:due_date].any? %>
+              <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= onboarding.errors[:due_date].first %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </fieldset>
 
-  <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+    <!-- Botões de Ação -->
+    <div class="flex flex-col gap-3 border-t border-gray-200 pt-6 sm:flex-row dark:border-neutral-700">
+      <%= form.submit "Salvar Onboarding", 
+          class: "rounded-lg bg-blue-600 px-6 py-2.5 font-medium text-white shadow hover:bg-blue-700 active:bg-blue-800 transition dark:bg-blue-700 dark:hover:bg-blue-600 sm:order-last" %>
+      
+      <% if onboarding.persisted? %>
+        <%= link_to "Cancelar", onboarding_path(onboarding), 
+            class: "rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 hover:bg-gray-50 transition dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-700" %>
+      <% else %>
+        <%= link_to "Cancelar", onboardings_path, 
+            class: "rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 hover:bg-gray-50 transition dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-700" %>
+      <% end %>
+    </div>
   </div>
 <% end %>
