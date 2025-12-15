@@ -27,8 +27,9 @@
     </thead>
 
     <tbody class="bg-white divide-y divide-gray-100 dark:bg-neutral-800 dark:divide-neutral-700">
-      <% @onboardings.each do |onboarding| %>
-        <tr class="hover:bg-gray-50 dark:hover:bg-neutral-700">
+      <% if @onboardings.any? %>
+        <% @onboardings.each do |onboarding| %>
+          <tr class="hover:bg-gray-50 dark:hover:bg-neutral-700">
           <!-- TÍTULO: link, truncado, fallback 'Sem título' -->
           <td class="px-6 py-4 align-middle whitespace-nowrap text-sm font-medium text-gray-900 dark:text-neutral-100">
             <% title = onboarding.title.presence || "Sem título" %>
@@ -87,6 +88,13 @@
               <%= link_to "Editar", edit_onboarding_path(onboarding), class: "px-2 py-1 text-xs font-medium rounded border border-transparent hover:bg-gray-100 dark:hover:bg-neutral-700" %>
               <%= button_to "Excluir", onboarding, method: :delete, data: { confirm: "Tem certeza?" }, class: "px-2 py-1 text-xs font-medium rounded border border-transparent text-red-600 hover:bg-red-50 dark:hover:bg-neutral-700" %>
             </div>
+          </td>
+        </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-600 dark:text-neutral-300">
+            Você ainda não tem nenhum onboarding criado. <%= link_to "Crie seu primeiro onboarding", new_onboarding_path, class: "text-blue-600 dark:text-blue-400 font-medium hover:underline" %>
           </td>
         </tr>
       <% end %>

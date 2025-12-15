@@ -1,7 +1,8 @@
-<%= form_with(model: task, class: "contents") do |form| %>
+<%# Use nested model when rendered from an onboarding (new_onboarding_task_path), otherwise fall back to plain task %>
+<%= form_with(model: (defined?(@onboarding) && @onboarding.present?) ? [@onboarding, task] : task, class: "w-full") do |form| %>
   <% if task.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</h2>
+      <h2><%= pluralize(task.errors.count, "erro") %> impediram que a tarefa fosse salva:</h2>
 
       <ul class="list-disc ml-6">
         <% task.errors.each do |error| %>
@@ -11,7 +12,104 @@
     </div>
   <% end %>
 
-  <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <div class="space-y-6">
+    <fieldset>
+      <legend class="mb-4 text-sm font-semibold text-gray-900 dark:text-neutral-100">Detalhes da tarefa</legend>
+
+      <div class="space-y-4">
+        <div>
+          <%= form.label :subject, "Assunto", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+          <%= form.text_field :subject, placeholder: "Título da tarefa", class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none",
+              {"border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400": task.errors[:subject].none?,
+               "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": task.errors[:subject].any?}]
+          %>
+          <% if task.errors[:subject].any? %>
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= task.errors[:subject].first %></p>
+          <% end %>
+        </div>
+
+        <div>
+          <%= form.label :body, "Descrição", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+          <%= form.text_area :body, rows: 6, placeholder: "Detalhes da tarefa...", class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none resize-none",
+              {"border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-400": task.errors[:body].none?,
+               "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": task.errors[:body].any?}]
+          %>
+          <% if task.errors[:body].any? %>
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= task.errors[:body].first %></p>
+          <% end %>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <%= form.label :due_date, "Vencimento", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+            <%= form.datetime_local_field :due_date, value: (task.due_date.present? ? task.due_date.strftime('%Y-%m-%dT%H:%M') : nil), class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none",
+                {"border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100": task.errors[:due_date].none?,
+                 "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": task.errors[:due_date].any?}]
+            %>
+            <% if task.errors[:due_date].any? %>
+              <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= task.errors[:due_date].first %></p>
+            <% end %>
+          </div>
+
+          <div>
+            <%= form.label :reminder, "Lembrete", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+            <%= form.datetime_local_field :reminder, value: (task.reminder.present? ? task.reminder.strftime('%Y-%m-%dT%H:%M') : nil), class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none",
+                {"border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100": task.errors[:reminder].none?,
+                 "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": task.errors[:reminder].any?}]
+            %>
+            <% if task.errors[:reminder].any? %>
+              <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= task.errors[:reminder].first %></p>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <%= form.label :assignee_id, "Responsável", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+            <%= form.collection_select :assignee_id, User.order(:first_name), :id, :full_name, { include_blank: '—' }, class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none",
+                {"border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100": task.errors[:assignee_id].none?,
+                 "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": task.errors[:assignee_id].any?}]
+            %>
+            <% if task.errors[:assignee_id].any? %>
+              <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= task.errors[:assignee_id].first %></p>
+            <% end %>
+          </div>
+
+          <div>
+            <%= form.label :priority, "Prioridade", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+            <%= form.select :priority, options_for_select([['Alta','HIGH'], ['Média','MEDIUM'], ['Baixa','LOW']], selected: task.priority), { include_blank: '—' }, class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none",
+                {"border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100": task.errors[:priority].none?,
+                 "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": task.errors[:priority].any?}]
+            %>
+            <% if task.errors[:priority].any? %>
+              <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= task.errors[:priority].first %></p>
+            <% end %>
+          </div>
+
+          <div>
+            <%= form.label :status, "Status", class: "block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1.5" %>
+            <%= form.select :status, options_for_select([['Pendente','PENDING'], ['Em andamento','IN_PROGRESS'], ['Concluída','COMPLETED'], ['Atrasada','OVERDUE']], selected: task.status), { include_blank: '—' }, class: ["w-full rounded-lg border px-3.5 py-2.5 text-sm shadow-sm transition focus:outline-none",
+                {"border-gray-300 bg-white text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100": task.errors[:status].none?,
+                 "border-red-400 bg-red-50 text-gray-900 focus:border-red-500 focus:ring-2 focus:ring-red-100 dark:border-red-600 dark:bg-red-950 dark:text-red-100": task.errors[:status].any?}]
+            %>
+            <% if task.errors[:status].any? %>
+              <p class="mt-1 text-sm text-red-600 dark:text-red-400"><%= task.errors[:status].first %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="flex items-center gap-4">
+      <div class="flex items-center">
+        <%= form.check_box :visibility, class: "h-4 w-4 text-blue-600 border-gray-300 rounded" %>
+        <%= form.label :visibility, "Visível", class: "ml-2 text-sm text-gray-700 dark:text-neutral-300" %>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end dark:border-neutral-700">
+      <%= form.submit (task.new_record? ? 'Criar tarefa' : 'Salvar alterações'), class: "rounded-lg bg-blue-600 px-6 py-2.5 font-medium text-white shadow hover:bg-blue-700 active:bg-blue-800 transition dark:bg-blue-700 dark:hover:bg-blue-600 sm:order-last" %>
+      <%= link_to "Cancelar", (defined?(@onboarding) && @onboarding.present?) ? onboarding_path(@onboarding) : tasks_path, class: "rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 hover:bg-gray-50 transition dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-700" %>
+    </div>
   </div>
 <% end %>

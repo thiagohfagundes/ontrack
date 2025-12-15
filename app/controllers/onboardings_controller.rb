@@ -4,7 +4,7 @@ class OnboardingsController < ApplicationController
 
   # GET /onboardings or /onboardings.json
   def index
-    @onboardings = Onboarding.all
+    @onboardings = current_user.onboardings.all
   end
 
   # GET /onboardings/1 or /onboardings/1.json

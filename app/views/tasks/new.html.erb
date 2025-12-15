@@ -1,9 +1,16 @@
-<% content_for :title, "New task" %>
+<% content_for :title, "Nova tarefa" %>
 
 <div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New task</h1>
+  <div class="mb-6">
+    <h1 class="text-3xl font-extrabold text-slate-900">Nova tarefa</h1>
+    <p class="mt-1 text-sm text-slate-500">Crie uma nova tarefa associada ao processo.</p>
+  </div>
 
   <%= render "form", task: @task %>
 
-  <%= link_to "Back to tasks", tasks_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <% if defined?(@onboarding) && @onboarding.present? %>
+    <%= link_to "Voltar para onboarding", onboarding_path(@onboarding), class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <% else %>
+    <%= link_to "Voltar para tarefas", tasks_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <% end %>
 </div>
